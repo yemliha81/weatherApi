@@ -14,10 +14,10 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 @cache_page(CACHE_TTL)
 def get_temperature(request):
 
-    if 'authorization' not in request.headers:
+    if 'Authorization' not in request.headers:
         return JsonResponse( {'status' : '401', 'message' : 'Not authorized'}, safe=False )
     else:
-        if request.headers['authorization'] != 'fdxf523dxfdfd23242d34xf3ddx423':
+        if request.headers['Authorization'] != 'fdxf523dxfdfd23242d34xf3ddx423':
             return JsonResponse( {'status' : '401', 'message' : 'Not authorized'}, safe=False )
 
     check_parameter(request)
