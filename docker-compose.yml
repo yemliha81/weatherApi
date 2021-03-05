@@ -21,7 +21,7 @@ services:
       - DB_PASS=supersecretpassword
     depends_on:
       - db
-             
+      - redis             
   db:
     image: postgres:10-alpine
     environment:

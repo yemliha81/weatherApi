@@ -6,22 +6,44 @@ from .models import Records
 import requests
 import json
 import datetime
+from datetime import timedelta
+from django.utils import timezone
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 @cache_page(CACHE_TTL)
 def get_temperature(request):
-    city = request.GET["location"]
 
+    if 'authorization' not in request.headers:
+        return JsonResponse( {'status' : '401', 'message' : 'Not authorized'}, safe=False )
+    else:
+        if request.headers['authorization'] != 'fdxf523dxfdfd23242d34xf3ddx423':
+            return JsonResponse( {'status' : '401', 'message' : 'Not authorized'}, safe=False )
+
+    check_parameter(request)
+
+    city = request.GET["location"]
     db_response = db_call(city)
     
     if db_response != None:
         return JsonResponse(db_response, safe=False)
     else:
-        return JsonResponse( api_call(city) )
+        api_response = api_call(city)
+        
+        if api_response == None:    
+            return JsonResponse( {'status' : '404', 'message' : 'No data found'}, safe=False )
+        else:
+            return JsonResponse(api_response, safe=False)
+
 
 def db_call(city):
-    response = Records.objects.filter(city_name=city).values()
+    
+
+    this_hour = timezone.now().replace(minute=0, second=0, microsecond=0)
+    one_hour_before = this_hour - timedelta(hours=1)
+    
+    response = Records.objects.filter(city_name=city, created_at__range=(one_hour_before, this_hour)).values()
+
     
     if response:
         return list(response)[0]
@@ -79,5 +101,11 @@ def api_call(city):
         
     except:
         HttpResponse("Something went wrong")
-    
-    
+
+
+def check_parameter(request):
+
+    if 'location' in request.GET:
+        city = request.GET["location"]
+    else:
+        return JsonResponse( {'status' : '404', 'message' : 'missing parameter'}, safe=False )
