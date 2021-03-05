@@ -1,0 +1,54 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample Weather API project which was built with Django, Postgres, Redis and Docker",
+    "version": "1.0.0",
+    "title": "Weather API Project",
+    "contact": {
+      "email": "yemliha.demirdelen@gmail.com"
+    }
+  },
+  "host": "localhost:8000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/get_temperature": {
+      "get": {
+        "tags": [
+          "location"
+        ],
+        "summary": "Search city name for temperature data",
+        "description": "",
+        "operationId": "",
+        "consumes": [
+          "none"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "location",
+            "type": "string",
+            "description": "Temperature record object",
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfull"
+          }
+        }
+      }
+    }
+  }
+}
